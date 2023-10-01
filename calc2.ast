@@ -1,0 +1,33 @@
+load system io.
+load system math.
+
+function f with x do x*x end.
+
+-- can rewrite these to multiply entire result at end rather than doing it every time
+
+-- a & b are lower & upper limits, d is change (upper limit / parts), f is function, t is total
+function right with (a, b, d, f, t) do
+  if a+d == b do t + d*f(b)
+  else do right (a, b-d, d, f, t + d*f(b))
+  end
+end
+
+
+function left with (a, b, d, f, t) do
+  if a == b-d do t + d * f(b-d)
+  else do left (a, b-d, d, f, t + d * f(b-d))
+  end
+end
+
+function mid with (a, b, d, f, t) do
+  if not (gettype(t) == "integer") do mid (a + d/2, b - d/2, d, f, 0)
+  elif a == b do t + d * f(b)
+  else do mid (a, b-d, d, f, t + d*f(b))
+  end
+end
+
+
+--io @println(3 * f 3).
+io @println(right (0, 6, 3, f, 0)).
+io @println(left (0, 6, 3, f, 0)).
+io @println(mid (0, 6, 2, f, ())).
