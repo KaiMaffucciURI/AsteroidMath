@@ -1,33 +1,37 @@
 load system io.
-load system math.
+--load system math.
 
+-- a simple test function
+-- but you can toss any lambda as your f for any of the other function applications
 function f with x do x*x end.
 
--- can rewrite these to multiply entire result at end rather than doing it every time
+-- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
 -- a & b are lower & upper limits, d is change (upper limit / parts), f is function, t is total
 function right with (a, b, d, f, t) do
-  if a+d == b do t + d*f(b)
-  else do right (a, b-d, d, f, t + d*f(b))
+  if a+d == b do d * (t + f(b))
+  else do right (a, b-d, d, f, t + f(b))
   end
 end
 
 
 function left with (a, b, d, f, t) do
-  if a == b-d do t + d * f(b-d)
-  else do left (a, b-d, d, f, t + d * f(b-d))
+  if a == b-d do d * (t + f(b-d))
+  else do left (a, b-d, d, f, t + f(b-d))
   end
 end
 
 function mid with (a, b, d, f, t) do
-  if not (gettype(t) == "integer") do mid (a + d/2, b - d/2, d, f, 0)
-  elif a == b do t + d * f(b)
-  else do mid (a, b-d, d, f, t + d*f(b))
+  if gettype(t) == "none" do mid (a + d/2, b - d/2, d, f, 0)
+  elif a == b do d*(t + f(b))
+  else do mid (a, b-d, d, f, t + f(b))
   end
 end
 
+-- TODO: trap[ezoid] & simp[son's] functions 
 
---io @println(3 * f 3).
+-- test code
+io @println(f 3).
 io @println(right (0, 6, 3, f, 0)).
 io @println(left (0, 6, 3, f, 0)).
 io @println(mid (0, 6, 2, f, ())).
