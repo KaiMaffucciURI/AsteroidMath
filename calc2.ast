@@ -2,8 +2,9 @@ load system io.
 --load system math.
 
 -- a simple test function
--- but you can toss any lambda as your f for any of the other function applications
-function f with x do x*x end.
+-- but you can toss any lambda as your f into any of the other function applications
+function f with x do x*x end
+function g with x do 2*x*x + 1 end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
@@ -21,6 +22,7 @@ function left with (a, b, d, f, t) do
   end
 end
 
+-- can't be d / 2, the bounds are wrong: need to adjust depending on d value
 function mid with (a, b, d, f, t) do
   if gettype(t) == "none" do mid (a + d/2, b - d/2, d, f, 0)
   elif a == b do d*(t + f(b))
@@ -28,10 +30,15 @@ function mid with (a, b, d, f, t) do
   end
 end
 
--- TODO: trap[ezoid] & simp[son's] functions 
+-- trap[ezoid]
+function trap with (a, b, d, f) do
+  (right(a, b, d, f, 0) + left(a, b, d, f, 0)) / 2
+end
+
+-- simp[son's]
+function simp with (a, b, d, f) do
+  (d*mid(a, b, d, f, ()) + trap(a, b, d, f)) / ((b-a) / d)
+end
 
 -- test code
-io @println(f 3).
-io @println(right (0, 6, 3, f, 0)).
-io @println(left (0, 6, 3, f, 0)).
-io @println(mid (0, 6, 2, f, ())).
+io @println(simp (0, 6, 3, f)).
