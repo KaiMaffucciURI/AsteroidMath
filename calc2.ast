@@ -1,12 +1,16 @@
 load system io.
 --load system math.
 
--- a simple test function
--- but you can toss any lambda as your f into any of the other function applications
-function f with x do x*x end
-function g with x do 2*x*x + 1 end
+-- simple test function(s)
+-- but you can toss any lambda as your function into any of the other function applications
+function f with x do x*x*x - 4.0*x*x - 3.0*x - 1.0 end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
+
+-- TODO: force all parameters to be reals
+-- TODO: find delta function
+-- TODO: make integral pattern thingy so you can put in an integral instead of having one parameter for each thing
+-- TODO: make base function & recursive versions, aka using practices from 212
 
 -- a & b are lower & upper limits, d is change (upper limit / parts), f is function, t is total
 function right with (a, b, d, f, t) do
@@ -15,16 +19,14 @@ function right with (a, b, d, f, t) do
   end
 end
 
-
 function left with (a, b, d, f, t) do
   if a == b-d do d * (t + f(b-d))
   else do left (a, b-d, d, f, t + f(b-d))
   end
 end
 
--- can't be d / 2, the bounds are wrong: need to adjust depending on d value
 function mid with (a, b, d, f, t) do
-  if gettype(t) == "none" do mid (a + d/2, b - d/2, d, f, 0)
+  if gettype(t) == "none" do mid (a + d/2.0, b - d/2.0, d, f, 0.0)
   elif a == b do d*(t + f(b))
   else do mid (a, b-d, d, f, t + f(b))
   end
@@ -32,13 +34,14 @@ end
 
 -- trap[ezoid]
 function trap with (a, b, d, f) do
-  (right(a, b, d, f, 0) + left(a, b, d, f, 0)) / 2
+  (right(a, b, d, f, 0.0) + left(a, b, d, f, 0.0)) / 2.0
 end
 
 -- simp[son's]
 function simp with (a, b, d, f) do
-  (d*mid(a, b, d, f, ()) + trap(a, b, d, f)) / ((b-a) / d)
+  (2.0*mid(a, b, d*2.0, f, ()) + trap(a, b, d*2.0, f)) / 3.0
 end
 
 -- test code
-io @println(simp (0, 6, 3, f)).
+io @println(trap(0.0, 8.0, 2.0, f)).
+io @println(simp(0.0, 8.0, 2.0, f)).
