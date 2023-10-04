@@ -7,7 +7,6 @@ function f with x do x*x*x - 4.0*x*x - 3.0*x - 1.0 end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
--- TODO: rewrite to be able to run in functional mode (-F flag)
 -- TODO: force all parameters to be reals
 -- TODO: find delta function
 -- TODO: make integral pattern thingy so you can put in an integral instead of having one parameter for each thing
@@ -15,22 +14,19 @@ function f with x do x*x*x - 4.0*x*x - 3.0*x - 1.0 end
 
 -- a & b are lower & upper limits, d is change (upper limit / parts), f is function, t is total
 function right with (a, b, d, f, t) do
-  if a+d == b do d * (t + f(b))
-  else do right (a, b-d, d, f, t + f(b))
-  end
+  d * (t + f(b)) if a+d == b
+  else right (a, b-d, d, f, t + f(b))
 end
 
 function left with (a, b, d, f, t) do
-  if a == b-d do d * (t + f(b-d))
-  else do left (a, b-d, d, f, t + f(b-d))
-  end
+  d * (t + f(b-d)) if a == b-d
+  else left (a, b-d, d, f, t + f(b-d))
 end
 
 function mid with (a, b, d, f, t) do
-  if gettype(t) == "none" do mid (a + d/2.0, b - d/2.0, d, f, 0.0)
-  elif a == b do d*(t + f(b))
-  else do mid (a, b-d, d, f, t + f(b))
-  end
+  mid (a + d/2.0, b - d/2.0, d, f, 0.0) if gettype(t) == "none" else
+  d*(t + f(b)) if a == b
+  else mid (a, b-d, d, f, t + f(b))
 end
 
 -- trap[ezoid]
