@@ -7,6 +7,7 @@ function f with x do x*x*x - 4.0*x*x - 3.0*x - 1.0 end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
+-- TODO: rewrite to be able to run in functional mode (-F flag)
 -- TODO: force all parameters to be reals
 -- TODO: find delta function
 -- TODO: make integral pattern thingy so you can put in an integral instead of having one parameter for each thing
