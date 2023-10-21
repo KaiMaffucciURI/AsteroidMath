@@ -37,9 +37,13 @@ structure Integral with
       throw Error "invalid arguments for calculate delta method"
   end
 
-  function dec_b -- fix to use multi-dispatching somehow so i dont have to generate a new structure every time i want to decrement a freaking value!
+  function dec_b
     with none do
-       Integral(this@a, this@b-this@Dx, this@f, this@p-1, this@Dx)
+      --why do these 3 lines not do what the line after it does? idk for sure but i think its bc the 'return this' doesn't actually return the instance by value
+      --let this@b = this@b - this@Dx.
+      --let this@p = this@p - 1.
+      --return this.
+      Integral(this@a, this@b-this@Dx, this@f, this@p-1, this@Dx)
     with _ do
       throw Error "expected no arguments"
   end
@@ -47,7 +51,7 @@ end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
--- need to add comment here
+-- right-hand approximation function
 function right with (I:%Integral) do
   function right_rec with (I:%Integral, t) do
     I @Dx * (t + I @f(I @b)) if I @a + I @Dx == I @b
@@ -56,10 +60,17 @@ function right with (I:%Integral) do
   right_rec(I, 0.0)
 end
 
-
+-- right-hand approximation function
+function left with I:%Integral do
+  function left_rec with (I:%Integral, t) do
+    I@Dx * (t + I@f(I@b - I@Dx)) if I@a == I@b - I@Dx
+    else left_rec (I@dec_b(), t + I@f(I@b-I@Dx))
+  end
+  left_rec(I, 0.0)
+end
 
 -- test code
 let my_integral = Integral(0.0, 6.0, lambda with n do n*n*n + n, 3).
 io @println (my_integral).
 --io @println (my_integral @dec_b()).
-io @println (right(my_integral))
+io @println (left(my_integral))
