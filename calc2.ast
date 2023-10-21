@@ -52,7 +52,7 @@ end
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
 -- right-hand approximation function
-function right with (I:%Integral) do
+function right with I:%Integral do
   function right_rec with (I:%Integral, t) do
     I @Dx * (t + I @f(I @b)) if I @a + I @Dx == I @b
     else right_rec (I @dec_b(), t + I @f(I @b))
