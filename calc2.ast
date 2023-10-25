@@ -1,48 +1,100 @@
-load system io.
---load system math.
+-- Kai Maffucci, fully functional (no pun intended) 10/25/23
 
--- simple test function(s)
--- but you can toss any lambda as your function into any of the other function applications
-function f with x do x*x*x - 4.0*x*x - 3.0*x - 1.0 end
+load system io.
+
+structure Integral with
+
+  data a. -- lower bound
+  data b. -- upper bound
+  data f. -- integrand
+  data p. -- number of parts it's split up into (# of rectangles)
+  data Dx. -- delta
+
+  function __init__
+    with (a:%real, b:%real, f:%function) do
+      let this@a = a.
+      let this@b = b.
+      let this@f = f.
+    with (a:%real, b:%real, f:%function, p:%integer) do
+      let this@a = a.
+      let this@b = b.
+      let this@f = f.
+      let this@p = p.
+      this@calc_Dx(p).
+    with (a:%real, b:%real, f:%function, p:%integer, Dx) do
+      let this@a = a.
+      let this@b = b.
+      let this@f = f.
+      let this@p = p.
+      let this@Dx = Dx.
+    with _ do
+      throw Error "invalid arguments for Integral constructor"
+  end
+
+  function calc_Dx
+    with p:%integer do
+      let this@Dx = (this@b - this@a) / toreal(p).
+    with _ do
+      throw Error "invalid arguments for calculate delta method"
+  end
+
+  function dec_b
+    with none do
+      -- if we want to use this commented-out code, we have to refactor this to recalculate the total as well and return both the object and the new total as a tuple
+      --let this@b = this@b - this@Dx.
+      --let this@p = this@p - 1.
+      --return this.
+      Integral(this@a, this@b-this@Dx, this@f, this@p-1, this@Dx)
+    with _ do
+      throw Error "expected no arguments"
+  end
+end
 
 -- NOTE: odd values of d may be funky for mid. Is this concerning? Requires investegation, probably
 
--- TODO: rewrite to be able to run in functional mode (-F flag)
--- TODO: force all parameters to be reals
--- TODO: find delta function
--- TODO: make integral pattern thingy so you can put in an integral instead of having one parameter for each thing
--- TODO: make base function & recursive versions, aka using practices from 212
-
--- a & b are lower & upper limits, d is change (upper limit / parts), f is function, t is total
-function right with (a, b, d, f, t) do
-  if a+d == b do d * (t + f(b))
-  else do right (a, b-d, d, f, t + f(b))
+-- right-hand approximation function
+function right with (I:%Integral) do
+  function right_rec with (I:%Integral, t) do
+    I@Dx * (t + I @f(I@b)) if I@a + I@Dx >= I@b
+    else right_rec (I @dec_b(), t + I @f(I@b))
   end
+  right_rec(I, 0.0)
 end
 
-function left with (a, b, d, f, t) do
-  if a == b-d do d * (t + f(b-d))
-  else do left (a, b-d, d, f, t + f(b-d))
+-- right-hand approximation function
+function left with I:%Integral do
+  function left_rec with (I:%Integral, t) do
+    I@Dx * (t + I @f(I@b - I@Dx)) if I@a >= I@b - I@Dx
+    else left_rec (I @dec_b(), t + I @f(I@b-I@Dx))
   end
+  left_rec(I, 0.0)
 end
 
-function mid with (a, b, d, f, t) do
-  if gettype(t) == "none" do mid (a + d/2.0, b - d/2.0, d, f, 0.0)
-  elif a == b do d*(t + f(b))
-  else do mid (a, b-d, d, f, t + f(b))
+-- midpoint approximation function
+function mid with I:%Integral do
+  function mid_rec with (I:%Integral, t) do
+    mid_rec (Integral(I@a + (I@Dx)/2.0, I@b - (I@Dx)/2.0, I@f, I@p-1, I@Dx), 0.0) if gettype(t) == "none"
+    else I@Dx*(t + I @f(I@b)) if I@a == I@b
+    else mid_rec (I @dec_b(), t + I @f(I@b))
   end
+  mid_rec (I, none)
 end
 
--- trap[ezoid]
-function trap with (a, b, d, f) do
-  (right(a, b, d, f, 0.0) + left(a, b, d, f, 0.0)) / 2.0
+-- trapezoidal approximation function
+function trap with I:%Integral do
+  (right(I) + left(I)) / 2.0
 end
 
--- simp[son's]
-function simp with (a, b, d, f) do
-  (2.0*mid(a, b, d*2.0, f, ()) + trap(a, b, d*2.0, f)) / 3.0
+-- simpson's rule approximation function (doesn't work)
+function simp with I:%Integral do
+  (2.0*mid(I) + trap(I)) / 3.0
 end
 
 -- test code
-io @println(trap(0.0, 8.0, 2.0, f)).
-io @println(simp(0.0, 8.0, 2.0, f)).
+let I = Integral(0.0, 6.0, lambda with n do n*n*n + n, 3).
+io @println (I).
+io @println (left(I)).
+io @println (right(I)).
+io @println (mid(I)).
+io @println (trap(I)).
+io @println (simp(I)).
