@@ -15,8 +15,9 @@ A small module written in the Asteroid language to help me do Calculus II homewo
 
 ## Global functions
 I could've made these methods of the Integral structure, but I elected not to for now. The module works as-is, and any efforts to simplify it is extra work I unfortunately don't have time for right now. 
-- left(I:%Integral) - left-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- right(I:%Integral) - right-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- mid(I:%Integral) - midline integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- trap(I:%Integral) - trapezoid integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- simp(I:%Integral) - integral approximation using Simpson's rule. Has a recursive version of itself inside of it which includes an additional total parameter. 
+Each of these functions takes an Integral instance as input. They also have recursive versions of itself inside of it which includes an additional "total" parameter, but that's irrelevant for someone simply trying to use the module rather than modify it. 
+- left(I:%Integral) - left-hand integral approximation. 
+- right(I:%Integral) - right-hand integral approximation. 
+- mid(I:%Integral) - midline integral approximation. 
+- trap(I:%Integral) - trapezoid integral approximation. 
+- simp(I:%Integral) - integral approximation using Simpson's rule. 
