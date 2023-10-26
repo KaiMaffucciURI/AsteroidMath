@@ -1,5 +1,5 @@
 # AsteroidMath
-A small module written in the Asteroid language to help me do Calculus II homework. 
+A small module written in the Asteroid language to help me do Calculus II homework. Skip to the "global functions" section if you simply want to know how to use
 
 ## Integral structure:
 ### Member variables
@@ -15,8 +15,8 @@ A small module written in the Asteroid language to help me do Calculus II homewo
 
 ## Global functions
 I could've made these methods of the Integral structure, but I elected not to for now. The module works as-is, and any efforts to simplify it is extra work I unfortunately don't have time for right now. 
-- left(integral) - left-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- right(integral) - right-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- mid(integral) - midline integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- trap(integral) - trapezoid integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
-- simp(integral) - integral approximation using Simpson's rule. Has a recursive version of itself inside of it which includes an additional total parameter. 
+- left(I:%Integral) - left-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
+- right(I:%Integral) - right-hand integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
+- mid(I:%Integral) - midline integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
+- trap(I:%Integral) - trapezoid integral approximation. Has a recursive version of itself inside of it which includes an additional total parameter. 
+- simp(I:%Integral) - integral approximation using Simpson's rule. Has a recursive version of itself inside of it which includes an additional total parameter. 
